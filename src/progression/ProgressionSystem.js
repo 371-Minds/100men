@@ -1,6 +1,15 @@
 // Gorilla vs 100 Men - Progression System
 
 export class ProgressionSystem {
+    /**
+     * Set up database integration for persistent storage
+     * @param {DatabaseIntegration} dbIntegration - The database integration instance
+     */
+    setDatabaseIntegration(dbIntegration) {
+        this.dbIntegration = dbIntegration;
+        console.log('Database integration set up for progression system');
+    }
+    
     constructor() {
         // Player progression data
         this.playerData = {
@@ -393,25 +402,45 @@ export class ProgressionSystem {
     }
     
     saveProgress(gameState) {
-        // Save current progression data to localStorage
+        // Save current progression data to localStorage for backward compatibility
         try {
             localStorage.setItem('gorillaVsMen_progress', JSON.stringify(this.playerData));
-            console.log('Progress saved successfully');
+            console.log('Progress saved to localStorage successfully');
+            
+            // If database integration is available, save to database as well
+            if (this.dbIntegration) {
+                this.dbIntegration.saveProgress()
+                    .then(result => {
+                        if (result) {
+                            console.log('Progress saved to database successfully');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to save progress to database:', error);
+                    });
+            }
         } catch (error) {
             console.error('Failed to save progress:', error);
         }
     }
     
     _loadProgress() {
-        // Load progression data from localStorage
+        // First try to load from database if integration is available
+        if (this.dbIntegration) {
+            // Database loading is handled by the DatabaseIntegration class
+            // during initialization, so we don't need to do anything here
+            return;
+        }
+        
+        // Fall back to localStorage if database integration is not available
         try {
             const savedData = localStorage.getItem('gorillaVsMen_progress');
             if (savedData) {
                 this.playerData = JSON.parse(savedData);
-                console.log('Progress loaded successfully');
+                console.log('Progress loaded from localStorage successfully');
             }
         } catch (error) {
-            console.error('Failed to load progress:', error);
+            console.error('Failed to load progress from localStorage:', error);
         }
     }
     
