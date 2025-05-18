@@ -1,0 +1,13 @@
+{
+  "name": "gorilla-vs-100-men",
+  "version": "0.1.0",
+  "description": "A game where you can play as either a powerful gorilla or command a team of 100 men",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve -s ."
+  },
+  "dependencies": {
+    "serve": "^14.2.0"
+  },
+  "type": "module"
+}
